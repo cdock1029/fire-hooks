@@ -42,11 +42,11 @@ export function useCollection(
   return state
 }
 
-export interface CollectionDataResult<T> {
+export interface CollectionDataResult<T extends object> {
   error?: Error
   data?: Array<T & { id: string }>
 }
-export function useCollectionData<T>(
+export function useCollectionData<T extends object>(
   queryBuilder: () => firebase.firestore.Query | undefined,
   deps: any[] = [],
 ): CollectionDataResult<T> {
@@ -88,8 +88,11 @@ export function useDocument(
   return state
 }
 
-type DocumentDataResult<T> = T & { id: string } | null | undefined
-export function useDocumentData<T>(
+type DocumentDataResult<T extends object> =
+  | T & { id: string }
+  | null
+  | undefined
+export function useDocumentData<T extends object>(
   refBuilder: () => firebase.firestore.DocumentReference | undefined,
   deps: any[] = [],
 ): DocumentDataResult<T> {
