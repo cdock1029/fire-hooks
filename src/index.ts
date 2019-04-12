@@ -42,19 +42,20 @@ export function useCollection(
   return state
 }
 
-export type DocData = firebase.firestore.DocumentData & { id: string }
-export interface CollectionDataResult {
+export interface CollectionDataResult<T> {
   error?: Error
-  data?: Array<DocData>
+  data?: Array<T & { id: string }>
 }
-export function useCollectionData(
+export function useCollectionData<T>(
   queryBuilder: () => firebase.firestore.Query | undefined,
   deps: any[] = [],
-): CollectionDataResult {
+): CollectionDataResult<T> {
   const { error, snap } = useCollection(queryBuilder, deps)
   return {
     error,
-    data: snap ? snap.docs.map(d => ({ id: d.id, ...d.data() })) : undefined,
+    data: snap
+      ? snap.docs.map(d => ({ id: d.id, ...(d.data() as T) }))
+      : undefined,
   }
 }
 
@@ -87,18 +88,18 @@ export function useDocument(
   return state
 }
 
-type DocumentDataResult = DocData | null | undefined
-export function useDocumentData(
+type DocumentDataResult<T> = T & { id: string } | null | undefined
+export function useDocumentData<T>(
   refBuilder: () => firebase.firestore.DocumentReference | undefined,
   deps: any[] = [],
-): DocumentDataResult {
+): DocumentDataResult<T> {
   const { error, snap } = useDocument(refBuilder, deps)
   if (error) {
     throw error
   }
   return snap
     ? snap.exists
-      ? { id: snap.id, ...snap.data() }
+      ? { id: snap.id, ...(snap.data() as T) }
       : null
     : undefined
 }
