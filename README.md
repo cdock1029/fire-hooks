@@ -2,27 +2,50 @@
 
 > React hooks for firebase
 
-[![NPM](https://img.shields.io/npm/v/fire-hooks.svg)](https://www.npmjs.com/package/fire-hooks) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+[![NPM](https://img.shields.io/npm/v/@cdock/fire-hooks.svg)](https://www.npmjs.com/package/@cdock/fire-hooks)
 
 ## Install
 
 ```bash
-npm install --save fire-hooks
+npm install --save @cdock/fire-hooks
 ```
 
 ## Usage
 
 ```tsx
 import * as React from 'react'
+import firebase from '../firebase'
+import { useCollectionData } from '@cdock/fire-hooks'
 
-import MyComponent from 'fire-hooks'
+interface Cat {
+  name: string
+  breed: string
+}
 
-class Example extends React.Component {
-  render () {
-    return (
-      <MyComponent />
-    )
+function CatList({ ownerId }) {
+  const cats = useCollectionData<Cat>(() => {
+    if (ownerId) {
+      return firebase
+        .collection('pets')
+        .doc(ownerId)
+        .collection('cats')
+    }
+  }, [ownerId])
+
+  if (typeof cats === 'undefined') {
+    return <span>Loading...</span>
   }
+  return cats ? (
+    <ul>
+      {cats.map(c => (
+        <li key={c.id}>
+          Name: {c.name}, Breed: {c.breed}
+        </li>
+      ))}
+    </ul>
+  ) : (
+    <h1>No cats found</h1>
+  )
 }
 ```
 
