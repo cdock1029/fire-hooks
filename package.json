@@ -1,6 +1,6 @@
 {
   "name": "@cdock/fire-hooks",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "React hooks for firebase",
   "author": "cdock1029",
   "license": "MIT",
