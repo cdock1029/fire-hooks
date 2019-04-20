@@ -15,7 +15,7 @@ npm install --save @cdock/fire-hooks
 ```tsx
 import * as React from 'react'
 import firebase from '../firebase'
-import { useCollectionData } from '@cdock/fire-hooks'
+import { useCollectionData, useAuthState } from '@cdock/fire-hooks'
 
 interface Cat {
   name: string
