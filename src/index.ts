@@ -22,12 +22,17 @@ export function useCollection(
     const query = queryBuilder()
     if (query) {
       if (get) {
-        query
-          .get()
-          .then(snap => setState({ snap, error: null }))
-          .catch(error => {
-            setState({ snap: undefined, error })
-          })
+        try {
+          query
+            .get()
+            .then(snap => setState({ snap, error: null }))
+            .catch(reason => {
+              console.log('** Reason Message: **', reason)
+              setState({ snap: undefined, error: reason })
+            })
+        } catch (e) {
+          console.log('*** caught e:' + e.message, e)
+        }
         return
       }
       const unsub = query.onSnapshot(
@@ -107,7 +112,7 @@ export function useAuthState(
   auth: firebase.auth.Auth,
   { withClaims } = { withClaims: false },
 ): UserWithClaims | null | undefined {
-  let curr: UserWithClaims | null | undefined = undefined
+  let curr = undefined as UserWithClaims | null | undefined
   // if withClaims, then we'll have to load, so keep as undefined
   if (auth.currentUser && !withClaims) {
     curr = Object.assign(auth.currentUser, { claims: {} })
@@ -121,9 +126,11 @@ export function useAuthState(
           claims: token.claims,
         })
         setUser(userWithClaims)
-      } else {
+      } else if (u) {
         const userWithClaims: UserWithClaims = Object.assign(u, { claims: {} })
         setUser(userWithClaims)
+      } else {
+        setUser(null)
       }
     })
   }, [auth, withClaims])
