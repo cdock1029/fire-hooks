@@ -47,8 +47,22 @@ function CatList({ ownerId }) {
     <h1>No cats found</h1>
   )
 }
+
+function App() {
+  const user = useAuthState(firebase.auth(), { withClaims: true })
+  if (typeof user === 'undefined') {
+    return <span>Loading...</span>
+  }
+  return user ? (
+    <ErrorBoundary>
+      <CatList ownerId={user.claims.ownerId} />
+    </ErrorBoundary>
+  ) : (
+    <Login />
+  )
+}
 ```
 
-## License
+### License
 
 MIT © [cdock1029](https://github.com/cdock1029)

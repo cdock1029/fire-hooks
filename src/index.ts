@@ -1,46 +1,47 @@
-/**
- * @class ExampleComponent
- */
 import * as React from 'react'
 import {} from 'firebase/app'
 const { useState, useEffect } = React
 
+interface CollectionState {
+  snap: firebase.firestore.QuerySnapshot | undefined
+  error: Error | null
+}
 export function useCollection(
   queryBuilder: () => firebase.firestore.Query | undefined,
   deps: any[] = [],
   { get } = { get: false },
 ): firebase.firestore.QuerySnapshot | undefined {
-  const [snap, setSnap] = useState<
-    firebase.firestore.QuerySnapshot | undefined
-  >(undefined)
+  const [state, setState] = useState<CollectionState>({
+    snap: undefined,
+    error: null,
+  })
+  if (state.error) {
+    throw state.error
+  }
   useEffect(() => {
     const query = queryBuilder()
     if (query) {
       if (get) {
         query
           .get()
-          .then(snap => setSnap(snap))
+          .then(snap => setState({ snap, error: null }))
           .catch(error => {
-            setSnap(undefined)
-            throw error
+            setState({ snap: undefined, error })
           })
         return
       }
       const unsub = query.onSnapshot(
-        snap => setSnap(snap),
-        error => {
-          setSnap(undefined)
-          throw error
-        },
+        snap => setState({ snap, error: null }),
+        error => setState({ snap: undefined, error }),
       )
       return () => (console.log('unsub col'), unsub())
     } else {
-      setSnap(undefined)
+      setState({ snap: undefined, error: null })
       return
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [...deps, get])
-  return snap
+  return state.snap
 }
 
 export function useCollectionData<T extends object>(
@@ -53,31 +54,38 @@ export function useCollectionData<T extends object>(
     : undefined
 }
 
+interface DocumentState {
+  snap: firebase.firestore.DocumentSnapshot | undefined
+  error: Error | null
+}
 export function useDocument(
   refBuilder: () => firebase.firestore.DocumentReference | undefined,
   deps: any[] = [],
 ): firebase.firestore.DocumentSnapshot | undefined {
-  const [snap, setSnap] = useState<
-    firebase.firestore.DocumentSnapshot | undefined
-  >(undefined)
+  const [state, setState] = useState<DocumentState>({
+    snap: undefined,
+    error: null,
+  })
+  if (state.error) {
+    throw state.error
+  }
   useEffect(() => {
     const ref = refBuilder()
     if (ref) {
       const unsub = ref.onSnapshot(
-        snap => setSnap(snap),
+        snap => setState({ snap, error: null }),
         error => {
-          setSnap(undefined)
-          throw error
+          setState({ snap: undefined, error })
         },
       )
       return () => (console.log('unsub doc'), unsub())
     } else {
-      setSnap(undefined)
+      setState({ snap: undefined, error: null })
     }
     return
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps)
-  return snap
+  return state.snap
 }
 
 export function useDocumentData<T extends object>(
@@ -92,16 +100,32 @@ export function useDocumentData<T extends object>(
     : undefined
 }
 
+export interface UserWithClaims extends firebase.User {
+  claims: { [key: string]: any }
+}
 export function useAuthState(
   auth: firebase.auth.Auth,
-): firebase.User | null | undefined {
-  const [user, setUser] = useState((auth.currentUser || undefined) as (
-    | firebase.User
-    | null
-    | undefined))
+  { withClaims } = { withClaims: false },
+): UserWithClaims | null | undefined {
+  let curr: UserWithClaims | null | undefined = undefined
+  // if withClaims, then we'll have to load, so keep as undefined
+  if (auth.currentUser && !withClaims) {
+    curr = Object.assign(auth.currentUser, { claims: {} })
+  }
+  const [user, setUser] = useState(curr)
   useEffect(() => {
-    console.log('run auth effect')
-    auth.onAuthStateChanged(u => setUser(u))
-  }, [auth])
+    auth.onAuthStateChanged(async u => {
+      if (withClaims && u) {
+        const token = await u.getIdTokenResult(true)
+        const userWithClaims: UserWithClaims = Object.assign(u, {
+          claims: token.claims,
+        })
+        setUser(userWithClaims)
+      } else {
+        const userWithClaims: UserWithClaims = Object.assign(u, { claims: {} })
+        setUser(userWithClaims)
+      }
+    })
+  }, [auth, withClaims])
   return user
 }
