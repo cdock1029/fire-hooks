@@ -35,7 +35,7 @@ function CatList({ ownerId }) {
   if (typeof cats === 'undefined') {
     return <span>Loading...</span>
   }
-  return cats ? (
+  return cats.length ? (
     <ul>
       {cats.map(c => (
         <li key={c.id}>
