@@ -52,11 +52,12 @@ export function useCollection(
 export function useCollectionData<T extends object>(
   queryBuilder: () => firebase.firestore.Query | undefined,
   deps: any[] = [],
+  initialState?: (T & { id: string })[],
 ): Array<T & { id: string }> | undefined {
   const snap = useCollection(queryBuilder, deps)
   return snap
     ? snap.docs.map(d => ({ id: d.id, ...(d.data() as T) }))
-    : undefined
+    : initialState || undefined
 }
 
 interface DocumentState {
@@ -96,13 +97,14 @@ export function useDocument(
 export function useDocumentData<T extends object>(
   refBuilder: () => firebase.firestore.DocumentReference | undefined,
   deps: any[] = [],
+  initialState?: T & { id: string },
 ): T & { id: string } | null | undefined {
   const snap = useDocument(refBuilder, deps)
   return snap
     ? snap.exists
       ? { id: snap.id, ...(snap.data() as T) }
       : null
-    : undefined
+    : initialState || undefined
 }
 
 export interface UserWithClaims extends firebase.User {
