@@ -39,7 +39,7 @@ export function useCollection(
         snap => setState({ snap, error: null }),
         error => setState({ snap: undefined, error }),
       )
-      return () => (console.log('unsub col'), unsub())
+      return () => unsub()
     } else {
       setState({ snap: undefined, error: null })
       return
@@ -84,7 +84,7 @@ export function useDocument(
           setState({ snap: undefined, error })
         },
       )
-      return () => (console.log('unsub doc'), unsub())
+      return () => unsub()
     } else {
       setState({ snap: undefined, error: null })
     }
