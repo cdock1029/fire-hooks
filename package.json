@@ -43,7 +43,7 @@
     "eslint-plugin-flowtype": "3.6.1",
     "eslint-plugin-import": "2.17.2",
     "eslint-plugin-jsx-a11y": "6.2.1",
-    "eslint-plugin-react": "7.12.4",
+    "eslint-plugin-react": "7.14.3",
     "eslint-plugin-react-hooks": "1.6.0",
     "firebase": "5.9.4",
     "gh-pages": "2.0.1",
