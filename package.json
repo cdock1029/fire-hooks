@@ -23,7 +23,7 @@
   },
   "dependencies": {},
   "peerDependencies": {
-    "firebase": "5.x.x",
+    "firebase": "5.x.x || 6.x",
     "react": "16.8.x",
     "react-dom": "16.8.x"
   },
@@ -45,7 +45,7 @@
     "eslint-plugin-jsx-a11y": "6.2.1",
     "eslint-plugin-react": "7.12.4",
     "eslint-plugin-react-hooks": "1.6.0",
-    "firebase": "5.9.4",
+    "firebase": "6.4.2",
     "gh-pages": "2.0.1",
     "react": "16.8.6",
     "react-dom": "16.8.6",
