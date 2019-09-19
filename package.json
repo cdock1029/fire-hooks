@@ -46,7 +46,7 @@
     "eslint-plugin-jsx-a11y": "6.x",
     "eslint-plugin-react": "7.x",
     "eslint-plugin-react-hooks": "1.x",
-    "firebase": "6.4.2",
+    "firebase": "6.6.2",
     "gh-pages": "2.1.1",
     "react": "16.9.0",
     "react-dom": "16.9.0",
