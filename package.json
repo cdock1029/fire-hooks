@@ -24,8 +24,8 @@
   "dependencies": {},
   "peerDependencies": {
     "firebase": "6.x.x",
-    "react": "16.9.x",
-    "react-dom": "16.9.x"
+    "react": "16.9.x || 16.13.x",
+    "react-dom": "16.9.x || 16.13.x"
   },
   "devDependencies": {
     "@svgr/rollup": "4.3.2",
@@ -48,8 +48,8 @@
     "eslint-plugin-react-hooks": "1.x",
     "firebase": "6.4.2",
     "gh-pages": "2.1.1",
-    "react": "16.9.0",
-    "react-dom": "16.9.0",
+    "react": "16.13.0",
+    "react-dom": "16.13.0",
     "react-scripts-ts": "3.1.0",
     "rollup": "1.20.2",
     "rollup-plugin-babel": "4.3.3",
